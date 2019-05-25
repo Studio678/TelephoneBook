@@ -12,21 +12,109 @@ package com.studio678;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
     private static String readBlock() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Input 'LIST' for print all items in List or command: ");
+        System.out.println("Input 'LIST' for print all items in List or value of field: ");
         String str = reader.readLine().trim();
         System.out.println();
 
         return str;
     }
 
+    //find name
+    private final static Pattern FIO_PATTERN = Pattern.compile("\\s*+([А-ЯЁ][а-яё]++(?:-[А-ЯЁ][а-яё]++)?)\\s++");
+    //find telephone
+    private final static Pattern PHONE_PATTERN = Pattern.compile("\\s*+([0-9]++)\\s++");
 
-    public static void main(String[] args) {
+
+
+    private static TreeMap<String,String> getPhoneBook() throws IOException {
+        TreeMap<String, String> telephoneBook = new TreeMap<>();
+        String phone;
+        String name;
+        while(true) {
+            //read command
+            String command = readBlock();
+            //check if LIST, name or telephone
+            if (command.equals("LIST")) {
+                return telephoneBook;
+            } else if (command.contains("[0-9]++")) {
+                phone = command;
+                //filter telephone replaceAll("[^0-9]+","")
+                phone.replaceAll("[^0-9]+", "");
+                //Matcher matcher = PHONE_PATERN.matcher(phone);
+                if (telephoneBook.containsValue(phone)) {
+                    //show name for this phone
+
+                    System.out.println(telephoneBook.get(phone));
+                }
+                else{
+                    System.out.println("Field name:/n");
+                    name = readBlock();
+                    Matcher matcherName = FIO_PATTERN.matcher(name);
+                    if (matcherName.matches()) {
+                        //if input correct put record in book
+                        telephoneBook.put(phone, name);
+                    } else {//incorrect input
+                        //cycle input until it will be correct
+                        while (!matcherName.matches()) {
+                            name = readBlock();
+                            if (name.equals("LIST")) {//exit if list
+                                return telephoneBook;
+                            }
+                        }
+                        //put record in book
+                        telephoneBook.put(phone, name);
+                    }
+                }
+            } else {
+                name = command;
+                //Matcher matcher = FIO_PATTERN.matcher(name);
+                //check if book contains name
+                if(telephoneBook.containsKey(name)){
+                    System.out.println("contains name");
+                }else{
+                    //reed phone put new record
+                    System.out.println("Field phone:/n");
+                    phone = readBlock();
+                    phone.replaceAll("[^0-9]+", "");
+                    Matcher matcherPhone = PHONE_PATTERN.matcher(phone);
+                    if(matcherPhone.matches()){
+                        //if input correct put record in book
+                        telephoneBook.put(name, phone);
+                    }else{//incorrect input
+                        //cycle input phone until it will be correct
+                        while (!matcherPhone.matches()){
+                            System.out.println("Incorrect phone, input phone in field:/n");
+                            phone = readBlock();
+                            phone.replaceAll("[^0-9]+", "");
+                            if (phone.equals("LIST")){//exit if list
+                                return telephoneBook;
+                            }
+                            //put record in book
+                            telephoneBook.put(name,phone);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+
+
+    public static void main(String[] args) throws IOException {
 	// write your code here
-
+        TreeMap<String,String> phoneBook = getPhoneBook();
+        //print all records in book
+        for(String name: phoneBook.keySet()){
+            System.out.printf(name + " => " + phoneBook.get(name));
+        }
     }
 }
