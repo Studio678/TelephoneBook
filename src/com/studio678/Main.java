@@ -1,10 +1,10 @@
-/**
- * Написать умный эмулятор телефонной книги. Если в неё ввести новое имя, она должна запросить
- * номер телефона. Если в неё ввести новый номер телефона, должна запросить имя. Если введённое
- * имя или номер телефона найдены, должна вывести дополнительную информацию: номер или имя,
- * соответственно. Команда LIST должна выводить всех абонентов в алфавитном порядке с номерами телефонов.
- *
- * author studio678 24.05.2019
+/*
+  Написать умный эмулятор телефонной книги. Если в неё ввести новое имя, она должна запросить
+  номер телефона. Если в неё ввести новый номер телефона, должна запросить имя. Если введённое
+  имя или номер телефона найдены, должна вывести дополнительную информацию: номер или имя,
+  соответственно. Команда LIST должна выводить всех абонентов в алфавитном порядке с номерами телефонов.
+
+  author studio678 24.05.2019
  */
 
 package com.studio678;
@@ -30,7 +30,7 @@ public class Main {
     //find name
     private final static Pattern FIO_PATTERN = Pattern.compile("\\s*+([А-ЯЁ][а-яё]++(?:-[А-ЯЁ][а-яё]++)?)\\s++");
     //find telephone
-    private final static Pattern PHONE_PATTERN = Pattern.compile("\\s*+([0-9]++)\\s++");
+    private final static Pattern PHONE_PATTERN = Pattern.compile("\\s*+([0-9]++)\\s++");//pattern works incorect
 
 
 
@@ -45,9 +45,8 @@ public class Main {
             if (command.equals("LIST")) {
                 return telephoneBook;
             } else if (command.contains("[0-9]++")) {
-                phone = command;
                 //filter telephone replaceAll("[^0-9]+","")
-                phone.replaceAll("[^0-9]+", "");
+                phone = command.replaceAll("[^0-9]+", "");
                 //Matcher matcher = PHONE_PATERN.matcher(phone);
                 if (telephoneBook.containsValue(phone)) {
                     //show name for this phone
@@ -82,23 +81,24 @@ public class Main {
                 }else{
                     //reed phone put new record
                     System.out.println("Field phone:/n");
-                    phone = readBlock();
-                    phone.replaceAll("[^0-9]+", "");
+                    String str = readBlock();
+                    phone = str.replaceAll("[^0-9]+", "");
                     Matcher matcherPhone = PHONE_PATTERN.matcher(phone);
                     if(matcherPhone.matches()){
                         //if input correct put record in book
                         telephoneBook.put(name, phone);
                     }else{//incorrect input
                         //cycle input phone until it will be correct
+                        String phoneIncorectInput;
                         while (!matcherPhone.matches()){
                             System.out.println("Incorrect phone, input phone in field:/n");
-                            phone = readBlock();
-                            phone.replaceAll("[^0-9]+", "");
+                            String str1 = readBlock();
+                            phoneIncorectInput = str1.replaceAll("[^0-9]+", "");
                             if (phone.equals("LIST")){//exit if list
                                 return telephoneBook;
                             }
                             //put record in book
-                            telephoneBook.put(name,phone);
+                            telephoneBook.put(name,phoneIncorectInput);
                         }
                     }
                 }
@@ -114,7 +114,7 @@ public class Main {
         TreeMap<String,String> phoneBook = getPhoneBook();
         //print all records in book
         for(String name: phoneBook.keySet()){
-            System.out.printf(name + " => " + phoneBook.get(name));
+            System.out.println(name + " => " + phoneBook.get(name));
         }
     }
 }
