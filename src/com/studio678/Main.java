@@ -12,6 +12,9 @@ package com.studio678;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +33,7 @@ public class Main {
     //find name
     private final static Pattern FIO_PATTERN = Pattern.compile("\\s*+([А-ЯЁ][а-яё]++(?:-[А-ЯЁ][а-яё]++)?)\\s++");
     //find telephone
-    private final static Pattern PHONE_PATTERN = Pattern.compile("\\s*+([0-9]++)\\s++");//pattern works incorect
+    private final static Pattern PHONE_PATTERN = Pattern.compile("([0-9]++)");//pattern works incorect
 
 
 
@@ -77,7 +80,8 @@ public class Main {
                 //Matcher matcher = FIO_PATTERN.matcher(name);
                 //check if book contains name
                 if(telephoneBook.containsKey(name)){
-                    System.out.println("contains name");
+                    //print name => phone
+                    System.out.println(name + " => " + telephoneBook.get(name));
                 }else{
                     //reed phone put new record
                     System.out.println("Field phone:/n");
@@ -94,7 +98,7 @@ public class Main {
                             System.out.println("Incorrect phone, input phone in field:/n");
                             String str1 = readBlock();
                             phoneIncorectInput = str1.replaceAll("[^0-9]+", "");
-                            if (phone.equals("LIST")){//exit if list
+                            if (str1.equals("LIST")){//exit if list
                                 return telephoneBook;
                             }
                             //put record in book
